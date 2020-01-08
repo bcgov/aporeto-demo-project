@@ -22,6 +22,24 @@ metadata:
     description: Hipster Store microservice demo application.
   name: hipster-store-demo
 objects:
+- apiVersion: secops.pathfinder.gov.bc.ca/v1alpha1
+  kind: NetworkSecurityPolicy
+  metadata:
+    name: loadgen-to-frontend
+    labels:
+      app: hipster-store
+  spec:
+    description: |
+      allow the load generator to communicate with
+      the front-end pod.
+    destination:
+    - - $namespace=${NAMESPACE}
+      - app=hipster-store
+      - role=frontend
+    source:
+    - - $namespace=${NAMESPACE}
+      - app=hipster-store
+      - role=loadgenerator
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
@@ -31,12 +49,13 @@ objects:
   spec:
     selector:
       matchLabels:
-        app: loadgenerator
+        app: hipster-store
     replicas: 1
     template:
       metadata:
         labels:
-          app: loadgenerator
+          app: hipster-store
+          role: loadgenerator
         annotations:
           sidecar.istio.io/rewriteAppHTTPProbers: "true"
       spec:
@@ -63,3 +82,8 @@ parameters:
     The number of users to simulate using the store.
   required: true
   value: "10"
+- name: NAMESPACE
+  description: |
+    The namespace where the load generator will be
+    run
+  required: true
