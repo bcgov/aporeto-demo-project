@@ -36,6 +36,16 @@ NOTES:
 could create a pod with matching labels that can talk to other
 peoples pods.
 
+### Add policy to:
+
+- [x] Pods to internal k8s API. (Done)
+- [x] Internet to Frontend. (Not Required ATM due to inherited rules)
+- [x] Frontend to (AdService, CheckoutService, ShippingService, CurrencyService, ProductCatalogService, RecommendationService, CartService)
+- [x] Checkout Service to EmailService, PaymentService, ShippingService, CurrencyService, ProductCatalogService, CartService.
+- [x] RecommendationService to ProductCatalogService
+- [x] CartService to Cache (redis)
+
+
 STEPS:
 
 1. Convert labeling scheme to be NSP focused by using `app` to group the 

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
@@ -29,10 +30,96 @@ objects:
     description: |
       allow all pods in the namespace to talk to the
       k8s api
-    destination:
-    - - int:network=internal-cluster-api-endpoint
     source:
-    - - $namespace=${NAMESPACE}
+    - - '$namespace=${NAMESPACE}'
+    destination:
+    - - 'int:network=internal-cluster-api-endpoint'
+- apiVersion: secops.pathfinder.gov.bc.ca/v1alpha1
+  kind: NetworkSecurityPolicy
+  metadata:
+    name: frontend-to-int-services
+    labels:
+      app: hipster-store
+  spec:
+    description: |
+      allow the frontend pod(s) only talk to the services
+      it needs to.
+    source:
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=frontend'
+    destination:
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=adservice'
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=checkoutservice'
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=shippingservice'
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=currencyservice'
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=productcatalogservice'
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=recommendationservice'
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=cartservice'
+- apiVersion: secops.pathfinder.gov.bc.ca/v1alpha1
+  kind: NetworkSecurityPolicy
+  metadata:
+    name: checkoutservice-to-int-services
+    labels:
+      app: hipster-store
+  spec:
+    description: |
+      allow the checkout service pod(s) to only talk to services
+      it needs to.
+    source:
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=checkoutservice'
+    destination:
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=emailservice'
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=paymentservice'
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=shippingservice'
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=currencyservice'
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=productcatalogservice'
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=cartservice'
+- apiVersion: secops.pathfinder.gov.bc.ca/v1alpha1
+  kind: NetworkSecurityPolicy
+  metadata:
+    name: recommendationservice-to-int-services
+    labels:
+      app: hipster-store
+  spec:
+    description: |
+      allow the recommendation service pod(s) to only talk to services
+      it needs to.
+    source:
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=recommendationservice'
+    destination:
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=productcatalogservice'
+- apiVersion: secops.pathfinder.gov.bc.ca/v1alpha1
+  kind: NetworkSecurityPolicy
+  metadata:
+    name: cartservice-to-int-services
+    labels:
+      app: hipster-store
+  spec:
+    description: |
+      allow the cart service pod(s) to only talk to services
+      it needs to.
+    source:
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=cartservice'
+    destination:
+    - - '$namespace=${NAMESPACE}'
+      - '@usr:role=redis-cart'
 parameters:
 - name: NAMESPACE
   description: |
