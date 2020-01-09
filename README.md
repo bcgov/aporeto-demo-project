@@ -35,3 +35,10 @@ NOTES:
 - Adding `- - $namespace=${NAMESPACE}` to both source and destination is important because, in theory, on OCP4 someone
 could create a pod with matching labels that can talk to other
 peoples pods.
+
+STEPS:
+
+1. Convert labeling scheme to be NSP focused by using `app` to group the 
+hipster-store components to an application and `role` to specify what the
+component (pod) does. This will allow us to run other applications in the same
+namespace (if needed) and use `role=` to identify processing units (PU) a.k.a pods in our NSP.
