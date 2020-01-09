@@ -19,7 +19,9 @@ apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   annotations:
-    description: Hipster Store microservice demo application.
+    description: |
+      Load generator for the Hipster Store microservice demo
+      application.
   name: hipster-store-demo
 objects:
 - apiVersion: secops.pathfinder.gov.bc.ca/v1alpha1
