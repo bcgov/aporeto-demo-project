@@ -34,14 +34,14 @@ objects:
     description: |
       allow the load generator to communicate with
       the front-end pod.
-    destination:
-    - - $namespace=${NAMESPACE}
-      - app=hipster-store
-      - role=frontend
     source:
     - - $namespace=${NAMESPACE}
       - app=hipster-store
       - role=loadgenerator
+    destination:
+    - - $namespace=${NAMESPACE}
+      - app=hipster-store
+      - role=frontend
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
