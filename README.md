@@ -139,7 +139,7 @@ The HS comes with a sample load generator. This is great for debugging NSP becau
 
 ```console
 oc process -f openshift/loadgen.yaml -p NAMESPACE=$(oc project --short=true) | \
-  oc apply -f -
+oc apply -f -
 ```
 
 You can now access your namespace via the Aporeto console and see the communication paths of the components. Green arrows mean all is well; orange mean something was not working but is now fixed; red indicates communication is failing. The direction of the arrow shows source to destination.
@@ -154,13 +154,24 @@ Use the label `app=hipster-store` to cleanup all deployments, pods, routes and N
 oc delete all,nsp -l "app=hipster-store"
 ```
 
+# Contributing
+
+This project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms."
+
+# References
+
+Find the Hipster Store [here](https://github.com/GoogleCloudPlatform/microservices-demo) on GitHub.
+
+The Hipster Store Service Architecture, which defines the communication patterns of the application, can be found [here](https://github.com/GoogleCloudPlatform/microservices-demo#service-architecture).
+
+Much of the application deployment manifests are taken directly from the k8s manifests supplied by Google. Those components are Copyright 2018 Google LLC.
 
 
 
-https://github.com/GoogleCloudPlatform/microservices-demo
 
-Hipster Store Service Architecture
-https://github.com/GoogleCloudPlatform/microservices-demo#service-architecture
+
+
+
 
 
 

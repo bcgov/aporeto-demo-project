@@ -1,5 +1,4 @@
-
-# How to contribute
+# How to Contribute
 
 Government employees, public and members of the private sector are encouraged to contribute to the repository by **forking and submitting a pull request**. 
 
