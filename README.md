@@ -53,89 +53,107 @@ This results in unique identifying a component by its role within OCP as seen by
 Pods are also called Processing Units (PU) in Aporeto parlance; notice how the PU
 inheres the `app: hipster-store` label from its deployment config. You can use this in NSP to reference all components. This would work well for your Pods-to-k8s-API policy.
 
+# The Laboratory
+
+TBD. This section will run people through a lab based on a bootstrap deployment.
+
+
 # Run & Go
+
+This sections is meant for to deploy-and-go. You won't learn much doing this other that have a working sample application you can review. The following steps (commands) will deploy the following components:
+
+1. Hipster Store Application
+2. Custom Policy
+3. Load Generate
 
 ## Deploy It
 
-## Cleanup
+### Step 1: Pre-Flight Check
 
+Before you deploy this application you should remove any `quick start` policy created automatically or otherwise. To check if you have quick start policy run the following command:
 
+```console
+oc get nsp
+```
 
-oc process -f openshift/deploy.yaml| oc apply -f -
+If you see these three policies they need to be deleted:
 
-
-➜  hipster-demo git:(master) ✗ oc process -f openshift/quickstart-netpol.yaml -p NAMESPACE=$(oc project --short=true) | oc apply -f -
-networksecuritypolicy.secops.pathfinder.gov.bc.ca/egress-internet created
-networksecuritypolicy.secops.pathfinder.gov.bc.ca/intra-namespace-comms created
-networksecuritypolicy.secops.pathfinder.gov.bc.ca/int-cluster-k8s-api-comms created
-
-
-➜  hipster-demo git:(master) ✗ oc process -f openshift/loadgen.yaml -p NAMESPACE=$(oc project --short=true) | oc apply -f - 
-networksecuritypolicy.secops.pathfinder.gov.bc.ca/loadgen-to-frontent created
-deployment.apps/loadgenerator created
-
-
-
-➜  aporeto-demo-project git:(master) ✗ oc delete all,nsp -l "app=hipster-store"
-pod "adservice-655ccdfc9-b6jvd" deleted
-pod "cartservice-698d86d5b4-cb4bc" deleted
-pod "checkoutservice-7c6d6f5c79-vtwms" deleted
-pod "currencyservice-6bc7895789-s57f7" deleted
-pod "emailservice-64cb7dccdc-js2fj" deleted
-pod "frontend-794f4f65c9-sww84" deleted
-pod "loadgenerator-6b4664dd7-8kf48" deleted
-pod "paymentservice-58565cc5d7-769nk" deleted
-pod "productcatalogservice-66596db955-dq94d" deleted
-pod "recommendationservice-5585758bb7-z6z6c" deleted
-pod "redis-cart-fc9dfd764-lk8sz" deleted
-pod "shippingservice-75756bfd9f-2m2wk" deleted
-service "adservice" deleted
-service "cartservice" deleted
-service "checkoutservice" deleted
-service "currencyservice" deleted
-service "emailservice" deleted
-service "frontend" deleted
-service "paymentservice" deleted
-service "productcatalogservice" deleted
-service "recommendationservice" deleted
-service "redis-cart" deleted
-service "shippingservice" deleted
-deployment.apps "adservice" deleted
-deployment.apps "cartservice" deleted
-deployment.apps "checkoutservice" deleted
-deployment.apps "currencyservice" deleted
-deployment.apps "emailservice" deleted
-deployment.apps "frontend" deleted
-deployment.apps "loadgenerator" deleted
-deployment.apps "paymentservice" deleted
-deployment.apps "productcatalogservice" deleted
-deployment.apps "recommendationservice" deleted
-deployment.apps "redis-cart" deleted
-deployment.apps "shippingservice" deleted
-route.route.openshift.io "frontend-route" deleted
-networksecuritypolicy.secops.pathfinder.gov.bc.ca "cartservice-to-int-services" deleted
-networksecuritypolicy.secops.pathfinder.gov.bc.ca "checkoutservice-to-int-services" deleted
-networksecuritypolicy.secops.pathfinder.gov.bc.ca "frontend-to-int-services" deleted
-networksecuritypolicy.secops.pathfinder.gov.bc.ca "int-cluster-k8s-api-comms" deleted
-networksecuritypolicy.secops.pathfinder.gov.bc.ca "loadgen-to-frontend" deleted
-networksecuritypolicy.secops.pathfinder.gov.bc.ca "recommendationservice-to-int-services" deleted
-➜  aporeto-demo-project git:(master) ✗ 
-
-
-➜  aporeto-demo-project git:(master) ✗ oc scale deployment loadgenerator --replicas=0 
-deployment.extensions/loadgenerator scaled
-
-➜  aporeto-demo-project git:(master) ✗ oc delete nsp checkoutservice-to-int-services
-networksecuritypolicy.secops.pathfinder.gov.bc.ca "checkoutservice-to-int-services" deleted
-
-➜  aporeto-demo-project git:(master) ✗ oc get pods,dc,services,routes
-No resources found.
-
-➜  hipster-demo git:(master) ✗ oc get nsp                                                                                            
+```console
 NAME                        AGE
 egress-internet             6m
 int-cluster-k8s-api-comms   6m
 intra-namespace-comms       6m
+```
+
+Delete them with the following command:
+
+```console
+oc delete nsp egress-internet int-cluster-k8s-api-comms intra-namespace-comms
+```
+
+If you ever want to re-deploy the quick start policy you can use the command below. The parameter `NAMESPACE` is needed because the policy needs to be scoped to your namespace and an associated Aporeto namespace with a matching name.
+
+
+```console
+oc process -f openshift/quickstart-netpol.yaml -p NAMESPACE=$(oc project --short=true) \
+| oc apply -f -
+```
+
+You'll see output similar to this if everything goes well:
+
+```console
+networksecuritypolicy.secops.pathfinder.gov.bc.ca/egress-internet created
+networksecuritypolicy.secops.pathfinder.gov.bc.ca/intra-namespace-comms created
+networksecuritypolicy.secops.pathfinder.gov.bc.ca/int-cluster-k8s-api-comms created
+```
+
+### Step 1: Deploy the Security Policy
+
+In order for PUs to deploy they need to be able to communicate with the k8s API. We'll go ahead and deploy our NSP first because it contains the policy to allow this to happen. We could deploy the applications first but we'll see lots of `CrashLoopBackOff` messages as PU's health checks and k8s API communications fail.
+
+```console
+oc process -f openshift/app-netpol -p NAMESPACE=$(oc project --short=true) \
+| oc apply -f -
+```
+
+As mentioned above this allows PUs to communicate acording to the [Service Architecture](https://github.com/GoogleCloudPlatform/microservices-demo#service-architecture).
+
+
+**🤓 ProTip**
+
+The `NAMESPACE` parameter is required because your policy will be applied to an Aporeto namespace that matches your OCP namespace. It will signal to Aporeto the scope of your policy.
+
+### Step 2: Deploy the Application
+
+Now deploy the application and components. This will spin up several pods and create a route you can use to test the application.
+
+```console
+oc process -f openshift/app.yaml| oc apply -f -
+```
+
+Wait for all the pods to start; they will have a "READY" count of `1/1` as shown by the command `oc get pods`. Once all pods have `1/1` in the READY state you can test the application by loading the route in your browser.
+
+### Step 3: Deploy the Load Generator
+
+The HS comes with a sample load generator. This is great for debugging NSP because it will generate traffic across all the components. The `loadgen.yaml` manifest contains its own NSP which is why the `NAMESPACE` parameter is required.
+
+```console
+oc process -f openshift/loadgen.yaml -p NAMESPACE=$(oc project --short=true) | \
+  oc apply -f -
+```
+
+You can now access your namespace via the Aporeto console and see the communication paths of the components. Green arrows mean all is well; orange mean something was not working but is now fixed; red indicates communication is failing. The direction of the arrow shows source to destination.
+
+![Aporeto Console](./images/all-comms-ok.png)
+
+## Cleanup
+
+Use the label `app=hipster-store` to cleanup all deployments, pods, routes and NSP associated with the HS in one easy step:
+
+```console
+oc delete all,nsp -l "app=hipster-store"
+```
+
 
 
 
@@ -145,26 +163,13 @@ Hipster Store Service Architecture
 https://github.com/GoogleCloudPlatform/microservices-demo#service-architecture
 
 
+
+# BELOW HERE IS TBD...
+
+
 NOTES:
 - Adding `- - $namespace=${NAMESPACE}` to both source and destination is important because, in theory, on OCP4 someone
 could create a pod with matching labels that can talk to other
 peoples pods.
 - You get pod crashes if, when they start, they can't talk to one another.
 - The app does not seem to recover after policy is added. Need to re-deploy the application.
-
-### Add policy to:
-
-- [x] Pods to internal k8s API. (Done)
-- [x] Internet to Frontend. (Not Required ATM due to inherited rules)
-- [x] Frontend to (AdService, CheckoutService, ShippingService, CurrencyService, ProductCatalogService, RecommendationService, CartService)
-- [x] Checkout Service to EmailService, PaymentService, ShippingService, CurrencyService, ProductCatalogService, CartService.
-- [x] RecommendationService to ProductCatalogService
-- [x] CartService to Cache (redis)
-
-
-STEPS:
-
-1. Convert labeling scheme to be NSP focused by using `app` to group the 
-hipster-store components to an application and `role` to specify what the
-component (pod) does. This will allow us to run other applications in the same
-namespace (if needed) and use `role=` to identify processing units (PU) a.k.a pods in our NSP.
