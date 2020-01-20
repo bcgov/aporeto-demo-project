@@ -57,13 +57,13 @@ inheres the `app: hipster-store` label from its deployment config. You can use t
 
 TBD. This section will run people through a lab based on a bootstrap deployment.
 
-Notes
+<!-- Notes
 
 - Adding `- - $namespace=${NAMESPACE}` to both source and destination is important because, in theory, on OCP4 someone
 could create a pod with matching labels that can talk to other
 peoples pods.
 - You get pod crashes if, when they start, they can't talk to one another.
-- The app does not seem to recover after policy is added. Need to re-deploy the application.
+- The app does not seem to recover after policy is added. Need to re-deploy the application. -->
 
 # Run & Go
 
