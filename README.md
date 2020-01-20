@@ -12,11 +12,11 @@ As part of this demo project the HS application was converted to work on OCP and
 
 # Labels
 
-Labels serve many purposes in the OpenShift Container Platform (OCP). By applying labels to pods or routes behavior can be assign or changed. In our case, by applying labels will help create an identity for the HS application as a whole as well as its constituent component.
+Labels serve many purposes in the OpenShift Container Platform (OCP). Applying labels to pods or routes behavior can be assign or changed. In our case, labels are used to create an identity for the HS application, as a whole, as well as its constituent component.
 
 # Application Identity
 
-We build the identity of our application and components by applying labels at different levels:
+Build the identity of our application and components by applying labels at different levels:
 
 The first label is attributed to the `Deployment` section of each component in our [app.yaml](openshift/app.yaml) manifest. By inserting the label `app: hipster-store` at this level we group all the components into a single application visible in the OCP Web console.
 
@@ -50,8 +50,8 @@ This results in unique identifying a component by its role within OCP as seen by
 
 **🤓 ProTip**
 
-Pods are also called Processing Units (PU) in Aporeto paralance; notice how the PU
-inheres the `app: hipster-store` label from its deployment config.
+Pods are also called Processing Units (PU) in Aporeto parlance; notice how the PU
+inheres the `app: hipster-store` label from its deployment config. You can use this in NSP to reference all components. This would work well for your Pods-to-k8s-API policy.
 
 # Run & Go
 
