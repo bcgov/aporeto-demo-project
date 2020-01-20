@@ -156,15 +156,15 @@ oc delete all,nsp -l "app=hipster-store"
 
 # Contributing
 
-This project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms."
+This project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
 
 # References
 
-Find the Hipster Store [here](https://github.com/GoogleCloudPlatform/microservices-demo) on GitHub.
+Find the original Hipster Store [here](https://github.com/GoogleCloudPlatform/microservices-demo) on GitHub.
 
 The Hipster Store Service Architecture, which defines the communication patterns of the application, can be found [here](https://github.com/GoogleCloudPlatform/microservices-demo#service-architecture).
 
-Much of the application deployment manifests are taken directly from the k8s manifests supplied by Google. Those components are Copyright 2018 Google LLC.
+Much of the application deployment manifests are taken directly from the k8s manifests supplied by Google. That source is Copyright 2018 Google LLC.
 
 
 
@@ -175,10 +175,8 @@ Much of the application deployment manifests are taken directly from the k8s man
 
 
 
-# BELOW HERE IS TBD...
+# NOTES
 
-
-NOTES:
 - Adding `- - $namespace=${NAMESPACE}` to both source and destination is important because, in theory, on OCP4 someone
 could create a pod with matching labels that can talk to other
 peoples pods.
