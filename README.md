@@ -114,7 +114,7 @@ networksecuritypolicy.secops.pathfinder.gov.bc.ca/intra-namespace-comms created
 networksecuritypolicy.secops.pathfinder.gov.bc.ca/int-cluster-k8s-api-comms created
 ```
 
-### Step 1: Deploy the Security Policy
+### Step 2: Deploy the Security Policy
 
 In order for PUs to deploy they need to be able to communicate with the k8s API. We'll go ahead and deploy our NSP first because it contains the policy to allow this to happen. We could deploy the applications first but we'll see lots of `CrashLoopBackOff` messages as PU's health checks and k8s API communications fail.
 
@@ -130,7 +130,7 @@ As mentioned above this allows PUs to communicate acording to the [Service Archi
 
 The `NAMESPACE` parameter is required because your policy will be applied to an Aporeto namespace that matches your OCP namespace. It will signal to Aporeto the scope of your policy.
 
-### Step 2: Deploy the Application
+### Step 3: Deploy the Application
 
 Now deploy the application and components. This will spin up several pods and create a route you can use to test the application.
 
@@ -140,7 +140,7 @@ oc process -f openshift/app.yaml| oc apply -f -
 
 Wait for all the pods to start; they will have a "READY" count of `1/1` as shown by the command `oc get pods`. Once all pods have `1/1` in the READY state you can test the application by loading the route in your browser.
 
-### Step 3: Deploy the Load Generator
+### Step 4: Deploy the Load Generator
 
 The HS comes with a sample load generator. This is great for debugging NSP because it will generate traffic across all the components. The `loadgen.yaml` manifest contains its own NSP which is why the `NAMESPACE` parameter is required.
 
