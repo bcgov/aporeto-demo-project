@@ -57,6 +57,13 @@ inheres the `app: hipster-store` label from its deployment config. You can use t
 
 TBD. This section will run people through a lab based on a bootstrap deployment.
 
+Notes
+
+- Adding `- - $namespace=${NAMESPACE}` to both source and destination is important because, in theory, on OCP4 someone
+could create a pod with matching labels that can talk to other
+peoples pods.
+- You get pod crashes if, when they start, they can't talk to one another.
+- The app does not seem to recover after policy is added. Need to re-deploy the application.
 
 # Run & Go
 
@@ -165,20 +172,3 @@ Find the original Hipster Store [here](https://github.com/GoogleCloudPlatform/mi
 The Hipster Store Service Architecture, which defines the communication patterns of the application, can be found [here](https://github.com/GoogleCloudPlatform/microservices-demo#service-architecture).
 
 Much of the application deployment manifests are taken directly from the k8s manifests supplied by Google. That source is Copyright 2018 Google LLC.
-
-
-
-
-
-
-
-
-
-
-# NOTES
-
-- Adding `- - $namespace=${NAMESPACE}` to both source and destination is important because, in theory, on OCP4 someone
-could create a pod with matching labels that can talk to other
-peoples pods.
-- You get pod crashes if, when they start, they can't talk to one another.
-- The app does not seem to recover after policy is added. Need to re-deploy the application.
