@@ -48,7 +48,7 @@ This results in unique identifying a component by its role within OCP as seen by
 
 ![Email Service Pod](./images/email-service-pod.png)
 
-**🤓 ProTip**
+**ProTip 🤓**
 
 Pods are also called Processing Units (PU) in Aporeto parlance; notice how the PU
 inheres the `app: hipster-store` label from its deployment config. You can use this in NSP to reference all components. This would work well for your Pods-to-k8s-API policy.
@@ -126,7 +126,7 @@ oc process -f openshift/app-netpol -p NAMESPACE=$(oc project --short=true) \
 As mentioned above this allows PUs to communicate acording to the [Service Architecture](https://github.com/GoogleCloudPlatform/microservices-demo#service-architecture).
 
 
-**🤓 ProTip**
+**ProTip 🤓**
 
 The `NAMESPACE` parameter is required because your policy will be applied to an Aporeto namespace that matches your OCP namespace. It will signal to Aporeto the scope of your policy.
 
