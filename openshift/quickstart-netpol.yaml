@@ -23,7 +23,7 @@ objects:
   kind: NetworkSecurityPolicy
   metadata:
     name: egress-internet
-  labels:
+    labels:
       app: hipster-store
   spec:
     description: |
