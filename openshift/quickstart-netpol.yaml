@@ -19,7 +19,28 @@ metadata:
     description: Hipster Store microservice demo application.
   name: hipster-store-demo
 objects:
-- apiVersion: secops.pathfinder.gov.bc.ca/v1alpha1
+- apiVersion: security.developer.gov.bc.ca/v1alpha1
+  kind: ExternalNetwork
+  metadata:
+    # This metadata field will be what you see with the command
+    # `oc get externalnetwork` or `kubctl get externalnetwork`.
+    name: all-things-external
+  spec:
+    # This name will be used internally by Aporeto; it should match
+    # the `name` field in metadata above.
+    description: |
+      specify a custom external network that can be
+      referenced by name.
+    entries:
+    - 0.0.0.0/0
+    protocols:
+    - tcp
+    - udp
+    ports:
+    - "80"
+    - "443"
+    - "53"
+- apiVersion: security.developer.gov.bc.ca/v1alpha1
   kind: NetworkSecurityPolicy
   metadata:
     name: egress-internet
@@ -31,8 +52,8 @@ objects:
     source:
       - - $namespace=${NAMESPACE}
     destination:
-      - - ext:network=any
-- apiVersion: secops.pathfinder.gov.bc.ca/v1alpha1
+      - - ext:network=all-things-external
+- apiVersion: security.developer.gov.bc.ca/v1alpha1
   kind: NetworkSecurityPolicy
   metadata:
     name: intra-namespace-comms
@@ -46,7 +67,7 @@ objects:
       - - $namespace=${NAMESPACE}
     destination:
       - - $namespace=${NAMESPACE}
-- apiVersion: secops.pathfinder.gov.bc.ca/v1alpha1
+- apiVersion: security.developer.gov.bc.ca/v1alpha1
   kind: NetworkSecurityPolicy
   metadata:
     name: int-cluster-k8s-api-comms
