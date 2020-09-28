@@ -22,55 +22,53 @@ metadata:
       Hipster Store microservice demo application.
   name: hipster-store-demo
 objects:
-- apiVersion: security.devops.gov.bc.ca/v1alpha1
-  kind: ExternalNetwork
-  metadata:
-    # This metadata field will be what you see with the command
-    # `oc get externalnetwork` or `kubctl get externalnetwork`.
-    name: all-things-external
-  spec:
-    # This name will be used internally by Aporeto; it should match
-    # the `name` field in metadata above.
-    description: |
-      specify a custom external network that can be
-      referenced by name.
-    entries:
-      - 0.0.0.0/0
-    servicePorts:
-      - "tcp/80"
-      - "tcp/443"
-      - "udp/53"
-- apiVersion: security.devops.gov.bc.ca/v1alpha1
-  kind: NetworkSecurityPolicy
-  metadata:
-    name: to-external-dns
-    labels:
-      app: hipster-store
-  spec:
-    description: |
-      allow the front end and checkout service to access
-      external DNS services
-    source:
-      - - $namespace=${NAMESPACE}
-        - 'role=frontend'
-      - - $namespace=${NAMESPACE}
-        - 'role=checkoutservice'
-    destination:
-      - - 'ext:name=all-things-external'
-- apiVersion: security.devops.gov.bc.ca/v1alpha1
-  kind: NetworkSecurityPolicy
-  metadata:
-    name: int-cluster-k8s-api-comms
-    labels:
-      app: hipster-store
-  spec:
-    description: |
-      allow all pods in the namespace to talk to the
-      k8s api
-    source:
-    - - '$namespace=${NAMESPACE}'
-    destination:
-    - - 'int:network=internal-cluster-api-endpoint'
+# - apiVersion: security.devops.gov.bc.ca/v1alpha1
+#   kind: ExternalNetwork
+#   metadata:
+#     # This metadata field will be what you see with the command
+#     # `oc get externalnetwork` or `kubctl get externalnetwork`.
+#     name: all-things-external
+#   spec:
+#     # This name will be used internally by Aporeto; it should match
+#     # the `name` field in metadata above.
+#     description: |
+#       specify a custom external network that can be
+#       referenced by name.
+#     entries:
+#       - 0.0.0.0/0
+#     servicePorts:
+#       - "tcp/8080"
+# - apiVersion: security.devops.gov.bc.ca/v1alpha1
+#   kind: NetworkSecurityPolicy
+#   metadata:
+#     name: to-external-dns
+#     labels:
+#       app: hipster-store
+#   spec:
+#     description: |
+#       allow the front end and checkout service to access
+#       external DNS services
+#     source:
+#       - - $namespace=${NAMESPACE}
+#         - 'role=frontend'
+#       - - $namespace=${NAMESPACE}
+#         - 'role=checkoutservice'
+#     destination:
+#       - - 'ext:name=all-things-external'
+# - apiVersion: security.devops.gov.bc.ca/v1alpha1
+#   kind: NetworkSecurityPolicy
+#   metadata:
+#     name: int-cluster-k8s-api-comms
+#     labels:
+#       app: hipster-store
+#   spec:
+#     description: |
+#       allow all pods in the namespace to talk to the
+#       k8s api
+#     source:
+#     - - '$namespace=${NAMESPACE}'
+#     destination:
+#     - - 'int:network=internal-cluster-api-endpoint'
 - apiVersion: security.devops.gov.bc.ca/v1alpha1
   kind: NetworkSecurityPolicy
   metadata:
