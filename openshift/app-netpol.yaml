@@ -22,7 +22,7 @@ metadata:
       Hipster Store microservice demo application.
   name: hipster-store-demo
 objects:
-- apiVersion: security.developer.gov.bc.ca/v1alpha1
+- apiVersion: security.devops.gov.bc.ca/v1alpha1
   kind: ExternalNetwork
   metadata:
     # This metadata field will be what you see with the command
@@ -35,15 +35,28 @@ objects:
       specify a custom external network that can be
       referenced by name.
     entries:
-    - 0.0.0.0/0
-    protocols:
-    - tcp
-    - udp
-    ports:
-    - "80"
-    - "443"
-    - "53"
-- apiVersion: security.developer.gov.bc.ca/v1alpha1
+      - 0.0.0.0/0
+    servicePorts:
+      - "tcp/80"
+      - "tcp/443"
+      - "udp/53"
+- apiVersion: security.devops.gov.bc.ca/v1alpha1
+  kind: NetworkSecurityPolicy
+  metadata:
+    name: loadgen-to-frontend
+    labels:
+      app: hipster-store
+  spec:
+    description: |
+      allow the load generator to communicate with
+      the front-end pod.
+    source:
+      - - '$namespace=hipster-shop-demo-two'
+        - 'role=loadgenerator'
+    destination:
+      - - '$namespace=hipster-shop-demo'
+        - 'role=frontend'
+- apiVersion: security.devops.gov.bc.ca/v1alpha1
   kind: NetworkSecurityPolicy
   metadata:
     name: to-external-dns
@@ -60,7 +73,7 @@ objects:
         - 'role=checkoutservice'
     destination:
       - - 'ext:name=all-things-external'
-- apiVersion: security.developer.gov.bc.ca/v1alpha1
+- apiVersion: security.devops.gov.bc.ca/v1alpha1
   kind: NetworkSecurityPolicy
   metadata:
     name: int-cluster-k8s-api-comms
@@ -74,7 +87,7 @@ objects:
     - - '$namespace=${NAMESPACE}'
     destination:
     - - 'int:network=internal-cluster-api-endpoint'
-- apiVersion: security.developer.gov.bc.ca/v1alpha1
+- apiVersion: security.devops.gov.bc.ca/v1alpha1
   kind: NetworkSecurityPolicy
   metadata:
     name: frontend-to-int-services
@@ -102,7 +115,7 @@ objects:
       - 'role=recommendationservice'
     - - '$namespace=${NAMESPACE}'
       - 'role=cartservice'
-- apiVersion: security.developer.gov.bc.ca/v1alpha1
+- apiVersion: security.devops.gov.bc.ca/v1alpha1
   kind: NetworkSecurityPolicy
   metadata:
     name: checkoutservice-to-int-services
@@ -128,7 +141,7 @@ objects:
       - 'role=productcatalogservice'
     - - '$namespace=${NAMESPACE}'
       - 'role=cartservice'
-- apiVersion: security.developer.gov.bc.ca/v1alpha1
+- apiVersion: security.devops.gov.bc.ca/v1alpha1
   kind: NetworkSecurityPolicy
   metadata:
     name: recommendationservice-to-int-services
@@ -144,7 +157,7 @@ objects:
     destination:
     - - '$namespace=${NAMESPACE}'
       - 'role=productcatalogservice'
-- apiVersion: security.developer.gov.bc.ca/v1alpha1
+- apiVersion: security.devops.gov.bc.ca/v1alpha1
   kind: NetworkSecurityPolicy
   metadata:
     name: cartservice-to-int-services
