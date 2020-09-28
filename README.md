@@ -50,8 +50,7 @@ This results in unique identifying a component by its role within OCP as seen by
 
 **ProTip 🤓**
 
-Pods are also called Processing Units (PU) in Aporeto parlance; notice how the PU
-inheres the `app: hipster-store` label from its deployment config. You can use this in NSP to reference all components. This would work well for your Pods-to-k8s-API policy.
+Pods are also called Processing Units (PU) in Aporeto parlance; notice how the PU inheres the `app: hipster-store` label from its deployment config. You can use this in NSP to reference all components. This would work well for your Pods-to-k8s-API policy.
 
 # The Laboratory
 
@@ -77,13 +76,13 @@ This sections is meant for to deploy-and-go. You won't learn much doing this oth
 
 ### Step 1: Pre-Flight Check
 
-Before you deploy this application you should remove any `quick start` policy created automatically or otherwise. To check if you have quick start policy run the following command:
+Before you deploy this application you should remove any existing policy created automatically or otherwise. To check if you have any existing policy run the following command:
 
 ```console
 oc get nsp
 ```
 
-If you see these three policies they need to be deleted:
+On OCP4 there are no default policies, however, on OCP 3.11 you may see these three policies. If you do, they need to be deleted:
 
 ```console
 NAME                        AGE
@@ -98,29 +97,14 @@ Delete them with the following command:
 oc delete nsp egress-internet int-cluster-k8s-api-comms intra-namespace-comms
 ```
 
-If you ever want to re-deploy the quick start policy you can use the command below. The parameter `NAMESPACE` is needed because the policy needs to be scoped to your namespace and an associated Aporeto namespace with a matching name.
-
-
-```console
-oc process -f openshift/quickstart-netpol.yaml -p NAMESPACE=$(oc project --short=true) \
-| oc apply -f -
-```
-
-You'll see output similar to this if everything goes well:
-
-```console
-networksecuritypolicy.secops.pathfinder.gov.bc.ca/egress-internet created
-networksecuritypolicy.secops.pathfinder.gov.bc.ca/intra-namespace-comms created
-networksecuritypolicy.secops.pathfinder.gov.bc.ca/int-cluster-k8s-api-comms created
-```
-
 ### Step 2: Deploy the Security Policy
 
 In order for PUs to deploy they need to be able to communicate with the k8s API. We'll go ahead and deploy our NSP first because it contains the policy to allow this to happen. We could deploy the applications first but we'll see lots of `CrashLoopBackOff` messages as PU's health checks and k8s API communications fail.
 
 ```console
-oc process -f openshift/app-netpol -p NAMESPACE=$(oc project --short=true) \
-| oc apply -f -
+oc process -f openshift/app-netpol.yaml \
+  -p NAMESPACE=$(oc project --short=true) \
+  | oc apply -f -
 ```
 
 As mentioned above this allows PUs to communicate acording to the [Service Architecture](https://github.com/GoogleCloudPlatform/microservices-demo#service-architecture).
@@ -145,8 +129,9 @@ Wait for all the pods to start; they will have a "READY" count of `1/1` as shown
 The HS comes with a sample load generator. This is great for debugging NSP because it will generate traffic across all the components. The `loadgen.yaml` manifest contains its own NSP which is why the `NAMESPACE` parameter is required.
 
 ```console
-oc process -f openshift/loadgen.yaml -p NAMESPACE=$(oc project --short=true) | \
-oc apply -f -
+oc process -f openshift/loadgen.yaml \
+  -p NAMESPACE=$(oc project --short=true) | \
+  oc apply -f -
 ```
 
 You can now access your namespace via the Aporeto console and see the communication paths of the components. Green arrows mean all is well; orange mean something was not working but is now fixed; red indicates communication is failing. The direction of the arrow shows source to destination.
