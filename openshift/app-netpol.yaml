@@ -43,22 +43,6 @@ objects:
 - apiVersion: security.devops.gov.bc.ca/v1alpha1
   kind: NetworkSecurityPolicy
   metadata:
-    name: loadgen-to-frontend
-    labels:
-      app: hipster-store
-  spec:
-    description: |
-      allow the load generator to communicate with
-      the front-end pod.
-    source:
-      - - '$namespace=hipster-shop-demo-two'
-        - 'role=loadgenerator'
-    destination:
-      - - '$namespace=hipster-shop-demo'
-        - 'role=frontend'
-- apiVersion: security.devops.gov.bc.ca/v1alpha1
-  kind: NetworkSecurityPolicy
-  metadata:
     name: to-external-dns
     labels:
       app: hipster-store
