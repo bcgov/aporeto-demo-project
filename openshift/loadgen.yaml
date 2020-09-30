@@ -20,11 +20,11 @@ kind: Template
 metadata:
   annotations:
     description: |
-      Load generator for the Hipster Store microservice demo
+      Load generator for the Hipster Store microservices demo
       application.
   name: hipster-store-demo
 objects:
-- apiVersion: secops.pathfinder.gov.bc.ca/v1alpha1
+- apiVersion: security.devops.gov.bc.ca/v1alpha1
   kind: NetworkSecurityPolicy
   metadata:
     name: loadgen-to-frontend
@@ -35,13 +35,11 @@ objects:
       allow the load generator to communicate with
       the front-end pod.
     source:
-    - - $namespace=${NAMESPACE}
-      - app=hipster-store
-      - role=loadgenerator
+      - - '$namespace=hipster-shop-demo'
+        - 'role=loadgenerator'
     destination:
-    - - $namespace=${NAMESPACE}
-      - app=hipster-store
-      - role=frontend
+      - - '$namespace=hipster-shop-demo'
+        - 'role=frontend'
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
@@ -68,7 +66,7 @@ objects:
           image: gcr.io/google-samples/microservices-demo/loadgenerator:v0.1.3
           env:
           - name: FRONTEND_ADDR
-            value: "frontend:80"
+            value: "frontend.hipster-shop-demo.svc:80"
           - name: USERS
             value: "${USERS}"
           resources:
