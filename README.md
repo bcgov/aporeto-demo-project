@@ -1,3 +1,8 @@
+
+
+**>>>This document is out of date. It will be updated shortly reflecting how to use native Kubernets NetworkPolicy. <<<**
+
+
 # TL;DR
 
 Check out the manifests in `openshift/`. There you'll find one to deploy the Hipster Store demo application and the associated Network Security Policy (NSP) to make it work.
