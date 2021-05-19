@@ -1,7 +1,4 @@
-
-
-**>>>This document is out of date. It will be updated shortly reflecting how to use native Kubernets NetworkPolicy. <<<**
-
+[![Lifecycle:Retired](https://img.shields.io/badge/Lifecycle-Retired-d45500)](<Redirect-URL>)
 
 # TL;DR
 
